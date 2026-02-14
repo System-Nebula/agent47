@@ -1,0 +1,9 @@
+target
+target_test-classes
+.classpath
+.direnv
+.devenv.flake.nix
+.devenv
+.idea
+.project
+.settings

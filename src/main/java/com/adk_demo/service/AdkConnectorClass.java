@@ -30,11 +30,13 @@ public class AdkConnectorClass {
 
     HelloTool helloTool = new HelloTool();
     RssTool rssTool = new RssTool();
+    StockTool stockTool = new StockTool();
 
     return LlmAgent.builder().name("ADK_DEMO")
         .model(new LangChain4j(localModel))
-        .instruction("You are a concise assistant")
-        .tools(helloTool.GetCustomTool(), rssTool.GetCustomTool())
+        .instruction(
+            "You are a helpful assistant. When you receive tool results, always present the information clearly to the user in a readable format.")
+        .tools(helloTool.GetCustomTool(), rssTool.GetCustomTool(), stockTool.GetCustomTool())
         .build();
   }
 

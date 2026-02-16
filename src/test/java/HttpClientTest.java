@@ -5,155 +5,155 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class HttpClientTest {
 
-    @Test
-    void testDefaultConstructor() {
-        HttpClient client = new HttpClient();
-        assertNotNull(client, "HttpClient instance should not be null");
-        assertNull(client.GetUrl(), "URL should be null after default constructor");
-    }
+  @Test
+  void testDefaultConstructor() {
+    HttpClient client = new HttpClient();
+    assertNotNull(client, "HttpClient instance should not be null");
+    assertNull(client.GetUrl(), "URL should be null after default constructor");
+  }
 
-    @Test
-    void testConstructorWithUrl() {
-        HttpClient client = new HttpClient("http://example.com");
-        assertNotNull(client, "HttpClient instance should not be null");
-        assertEquals("http://example.com", client.GetUrl());
-    }
+  @Test
+  void testConstructorWithUrl() {
+    HttpClient client = new HttpClient("http://example.com");
+    assertNotNull(client, "HttpClient instance should not be null");
+    assertEquals("http://example.com", client.GetUrl());
+  }
 
-    @Test
-    void testSetUrl() {
-        HttpClient client = new HttpClient();
-        client.SetUrl("http://example.com");
-        assertEquals("http://example.com", client.GetUrl());
-    }
+  @Test
+  void testSetUrl() {
+    HttpClient client = new HttpClient();
+    client.SetUrl("http://example.com");
+    assertEquals("http://example.com", client.GetUrl());
+  }
 
-    @Test
-    void testSetUrlMultipleTimes() {
-        HttpClient client = new HttpClient("http://first.com");
-        assertEquals("http://first.com", client.GetUrl());
-        client.SetUrl("http://second.com");
-        assertEquals("http://second.com", client.GetUrl());
-    }
+  @Test
+  void testSetUrlMultipleTimes() {
+    HttpClient client = new HttpClient("http://first.com");
+    assertEquals("http://first.com", client.GetUrl());
+    client.SetUrl("http://second.com");
+    assertEquals("http://second.com", client.GetUrl());
+  }
 
-    @Test
-    void testGetUrl() {
-        HttpClient client = new HttpClient();
-        assertNull(client.GetUrl());
-        
-        client.SetUrl("http://test.com");
-        assertEquals("http://test.com", client.GetUrl());
-    }
+  @Test
+  void testGetUrl() {
+    HttpClient client = new HttpClient();
+    assertNull(client.GetUrl());
 
-    @Test
-    void testGetStatusCodeWithNullUrl() {
-        HttpClient client = new HttpClient();
-        int statusCode = client.GetStatusCode();
-        assertEquals(-1, statusCode);
-        assertNotNull(client.GetLastError(), "Error message should be set");
-        assertTrue(client.GetLastError().contains("URL is null or empty"));
-    }
+    client.SetUrl("http://test.com");
+    assertEquals("http://test.com", client.GetUrl());
+  }
 
-    @Test
-    void testGetResponseBodyWithNullUrl() {
-        HttpClient client = new HttpClient();
-        String responseBody = client.GetResponseBody();
-        assertNull(responseBody);
-        assertNotNull(client.GetLastError(), "Error message should be set");
-        assertTrue(client.GetLastError().contains("URL is null or empty"));
-    }
+  @Test
+  void testGetStatusCodeWithNullUrl() {
+    HttpClient client = new HttpClient();
+    int statusCode = client.GetStatusCode();
+    assertEquals(-1, statusCode);
+    assertNotNull(client.GetLastError(), "Error message should be set");
+    assertTrue(client.GetLastError().contains("URL is null or empty"));
+  }
 
-    @Test
-    void testGetLastError() {
-        HttpClient client = new HttpClient();
-        String error = client.GetLastError();
-        assertNull(error, "Error should be null before any request");
-        
-        client.GetStatusCode();
-        assertNotNull(client.GetLastError(), "Error should be set after failed request");
-    }
+  @Test
+  void testGetResponseBodyWithNullUrl() {
+    HttpClient client = new HttpClient();
+    String responseBody = client.GetResponseBody();
+    assertNull(responseBody);
+    assertNotNull(client.GetLastError(), "Error message should be set");
+    assertTrue(client.GetLastError().contains("URL is null or empty"));
+  }
 
-    @Test
-    void testGetStatusCodeWithInvalidUrl() {
-        HttpClient client = new HttpClient("http://invalid-url-that-does-not-exist.local.invalid");
-        int statusCode = client.GetStatusCode();
-        assertTrue(statusCode == -1, "Status code should be -1 for invalid URL");
-        assertNotNull(client.GetLastError(), "Error message should be set");
-    }
+  @Test
+  void testGetLastError() {
+    HttpClient client = new HttpClient();
+    String error = client.GetLastError();
+    assertNull(error, "Error should be null before any request");
 
-    @Test
-    void testGetResponseBodyWithInvalidUrl() {
-        HttpClient client = new HttpClient("http://invalid-url-that-does-not-exist.local.invalid");
-        String responseBody = client.GetResponseBody();
-        assertNull(responseBody, "Response body should be null for invalid URL");
-        assertNotNull(client.GetLastError(), "Error message should be set");
-    }
+    client.GetStatusCode();
+    assertNotNull(client.GetLastError(), "Error should be set after failed request");
+  }
 
-    @Test
-    void testSetUrlClearsPreviousError() {
-        HttpClient client = new HttpClient("http://invalid-url.local.invalid");
-        client.GetStatusCode();
-        String firstError = client.GetLastError();
-        assertNotNull(firstError);
-        
-        client.SetUrl("http://another-invalid-url.local.invalid");
-        String errorAfterSetUrl = client.GetLastError();
-        assertNull(errorAfterSetUrl, "Error should be cleared after SetUrl");
-    }
+  @Test
+  void testGetStatusCodeWithInvalidUrl() {
+    HttpClient client = new HttpClient("http://invalid-url-that-does-not-exist.local.invalid");
+    int statusCode = client.GetStatusCode();
+    assertTrue(statusCode == -1, "Status code should be -1 for invalid URL");
+    assertNotNull(client.GetLastError(), "Error message should be set");
+  }
 
-    @Test
-    void testSetUrlClearsPreviousResponse() {
-        HttpClient client = new HttpClient("http://invalid-url.local.invalid");
-        client.GetStatusCode();
-        
-        client.SetUrl("http://another-url.local.invalid");
-        assertEquals(-1, client.GetStatusCode(), "Status code should be reset to -1 after SetUrl");
-    }
+  @Test
+  void testGetResponseBodyWithInvalidUrl() {
+    HttpClient client = new HttpClient("http://invalid-url-that-does-not-exist.local.invalid");
+    String responseBody = client.GetResponseBody();
+    assertNull(responseBody, "Response body should be null for invalid URL");
+    assertNotNull(client.GetLastError(), "Error message should be set");
+  }
 
-    @Test
-    void testSetHeader() {
-        HttpClient client = new HttpClient();
-        client.SetHeader("Authorization", "Bearer token123");
-        client.SetHeader("Content-Type", "application/json");
-        
-        client.SetUrl("http://httpbin.org/headers");
-        String responseBody = client.GetResponseBody();
-        
-        assertNotNull(responseBody, "Response body should not be null");
-        assertTrue(responseBody.contains("Authorization") || responseBody.contains("authorization"), 
-            "Response should contain Authorization header");
-        assertTrue(responseBody.contains("Bearer token123"), 
-            "Response should contain the token value");
-    }
+  @Test
+  void testSetUrlClearsPreviousError() {
+    HttpClient client = new HttpClient("http://invalid-url.local.invalid");
+    client.GetStatusCode();
+    String firstError = client.GetLastError();
+    assertNotNull(firstError);
 
-    @Test
-    void testClearHeaders() {
-        HttpClient client = new HttpClient();
-        client.SetHeader("X-Custom-Header", "custom-value");
-        client.ClearHeaders();
-        
-        client.SetUrl("http://httpbin.org/headers");
-        String responseBody = client.GetResponseBody();
-        
-        assertNotNull(responseBody, "Response body should not be null");
-        assertFalse(responseBody.contains("custom-value"), 
-            "Response should not contain cleared header value");
-    }
+    client.SetUrl("http://another-invalid-url.local.invalid");
+    String errorAfterSetUrl = client.GetLastError();
+    assertNull(errorAfterSetUrl, "Error should be cleared after SetUrl");
+  }
 
-    @Test
-    void testMultipleHeaders() {
-        HttpClient client = new HttpClient();
-        client.SetHeader("X-Header-1", "value1");
-        client.SetHeader("X-Header-2", "value2");
-        client.SetHeader("X-Header-3", "value3");
-        
-        client.SetUrl("http://httpbin.org/headers");
-        String responseBody = client.GetResponseBody();
-        
-        assertNotNull(responseBody, "Response body should not be null");
-        assertTrue(responseBody.contains("value1"), 
-            "Response should contain first header value");
-        assertTrue(responseBody.contains("value2"), 
-            "Response should contain second header value");
-        assertTrue(responseBody.contains("value3"), 
-            "Response should contain third header value");
-    }
+  @Test
+  void testSetUrlClearsPreviousResponse() {
+    HttpClient client = new HttpClient("http://invalid-url.local.invalid");
+    client.GetStatusCode();
+
+    client.SetUrl("http://another-url.local.invalid");
+    assertEquals(-1, client.GetStatusCode(), "Status code should be reset to -1 after SetUrl");
+  }
+
+  @Test
+  void testSetHeader() {
+    HttpClient client = new HttpClient();
+    client.SetHeader("Authorization", "Bearer token123");
+    client.SetHeader("Content-Type", "application/json");
+
+    client.SetUrl("http://httpbin.org/headers");
+    String responseBody = client.GetResponseBody();
+
+    assertNotNull(responseBody, "Response body should not be null");
+    assertTrue(responseBody.contains("Authorization") || responseBody.contains("authorization"),
+        "Response should contain Authorization header");
+    assertTrue(responseBody.contains("Bearer token123"),
+        "Response should contain the token value");
+  }
+
+  @Test
+  void testClearHeaders() {
+    HttpClient client = new HttpClient();
+    client.SetHeader("X-Custom-Header", "custom-value");
+    client.ClearHeaders();
+
+    client.SetUrl("http://httpbin.org/headers");
+    String responseBody = client.GetResponseBody();
+
+    assertNotNull(responseBody, "Response body should not be null");
+    assertFalse(responseBody.contains("custom-value"),
+        "Response should not contain cleared header value");
+  }
+
+  @Test
+  void testMultipleHeaders() {
+    HttpClient client = new HttpClient();
+    client.SetHeader("X-Header-1", "value1");
+    client.SetHeader("X-Header-2", "value2");
+    client.SetHeader("X-Header-3", "value3");
+
+    client.SetUrl("http://httpbin.org/headers");
+    String responseBody = client.GetResponseBody();
+
+    assertNotNull(responseBody, "Response body should not be null");
+    assertTrue(responseBody.contains("value1"),
+        "Response should contain first header value");
+    assertTrue(responseBody.contains("value2"),
+        "Response should contain second header value");
+    assertTrue(responseBody.contains("value3"),
+        "Response should contain third header value");
+  }
 }

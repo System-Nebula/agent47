@@ -107,4 +107,53 @@ public class HttpClientTest {
         client.SetUrl("http://another-url.local.invalid");
         assertEquals(-1, client.GetStatusCode(), "Status code should be reset to -1 after SetUrl");
     }
+
+    @Test
+    void testSetHeader() {
+        HttpClient client = new HttpClient();
+        client.SetHeader("Authorization", "Bearer token123");
+        client.SetHeader("Content-Type", "application/json");
+        
+        client.SetUrl("http://httpbin.org/headers");
+        String responseBody = client.GetResponseBody();
+        
+        assertNotNull(responseBody, "Response body should not be null");
+        assertTrue(responseBody.contains("Authorization") || responseBody.contains("authorization"), 
+            "Response should contain Authorization header");
+        assertTrue(responseBody.contains("Bearer token123"), 
+            "Response should contain the token value");
+    }
+
+    @Test
+    void testClearHeaders() {
+        HttpClient client = new HttpClient();
+        client.SetHeader("X-Custom-Header", "custom-value");
+        client.ClearHeaders();
+        
+        client.SetUrl("http://httpbin.org/headers");
+        String responseBody = client.GetResponseBody();
+        
+        assertNotNull(responseBody, "Response body should not be null");
+        assertFalse(responseBody.contains("custom-value"), 
+            "Response should not contain cleared header value");
+    }
+
+    @Test
+    void testMultipleHeaders() {
+        HttpClient client = new HttpClient();
+        client.SetHeader("X-Header-1", "value1");
+        client.SetHeader("X-Header-2", "value2");
+        client.SetHeader("X-Header-3", "value3");
+        
+        client.SetUrl("http://httpbin.org/headers");
+        String responseBody = client.GetResponseBody();
+        
+        assertNotNull(responseBody, "Response body should not be null");
+        assertTrue(responseBody.contains("value1"), 
+            "Response should contain first header value");
+        assertTrue(responseBody.contains("value2"), 
+            "Response should contain second header value");
+        assertTrue(responseBody.contains("value3"), 
+            "Response should contain third header value");
+    }
 }

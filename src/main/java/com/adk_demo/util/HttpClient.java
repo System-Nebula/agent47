@@ -12,6 +12,8 @@ import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.ssl.SSLContexts;
 
 import javax.net.ssl.SSLContext;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Logger;
 
 public class HttpClient {
@@ -44,6 +46,7 @@ public class HttpClient {
   private int lastStatusCode = -1;
   private String lastResponseBody;
   private String lastError;
+  private Map<String, String> headers = new HashMap<>();
 
   public HttpClient() {}
 
@@ -75,6 +78,11 @@ public class HttpClient {
       logger.info("Making HTTP request to: " + urlString);
       HttpGet httpGet = new HttpGet(urlString);
       
+      for (Map.Entry<String, String> entry : headers.entrySet()) {
+        httpGet.setHeader(entry.getKey(), entry.getValue());
+        logger.info("Adding header: " + entry.getKey() + " = " + entry.getValue());
+      }
+      
       try (CloseableHttpResponse response = httpClient.execute(httpGet)) {
         lastStatusCode = response.getCode();
         logger.info("HTTP response code: " + lastStatusCode);
@@ -102,5 +110,13 @@ public class HttpClient {
 
   public String GetLastError() {
     return lastError;
+  }
+
+  public void SetHeader(String name, String value) {
+    headers.put(name, value);
+  }
+
+  public void ClearHeaders() {
+    headers.clear();
   }
 }

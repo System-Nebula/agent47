@@ -20,6 +20,9 @@ public class RssToolTest {
 
     @BeforeEach
     void setUp() throws Exception {
+        environmentVariables.set("SERVICE_API_KEY", "test-key");
+        environmentVariables.set("MODEL_NAME", "test-model");
+        environmentVariables.set("API_ENDPOINT", "http://test-endpoint");
         resetRssToolStaticState();
     }
 
@@ -112,7 +115,6 @@ public class RssToolTest {
 
     @Test
     void testConstructor() {
-        environmentVariables.set("RSS_INDEXER_ENDPOINT", "");
         RssTool tool = new RssTool();
         assertNotNull(tool, "RssTool instance should not be null");
         assertNotNull(tool.GetCustomTool(), "FunctionTool should not be null");
@@ -122,10 +124,7 @@ public class RssToolTest {
 
     @Test
     void testFetchRssFeedWithoutEndpoint() {
-        environmentVariables.set("SERVICE_API_KEY", "test-key");
-        environmentVariables.set("MODEL_NAME", "test-model");
-        environmentVariables.set("API_ENDPOINT", "http://test-endpoint");
-        
+        environmentVariables.set("RSS_INDEXER_ENDPOINT", null);
         Map<String, Object> result = RssTool.fetchRssFeed();
         assertTrue(result.containsKey("result"), "Result map should contain 'result' key");
         String resultString = (String) result.get("result");
@@ -134,9 +133,6 @@ public class RssToolTest {
 
     @Test
     void testFetchRssFeedWithInvalidEndpoint() {
-        environmentVariables.set("SERVICE_API_KEY", "test-key");
-        environmentVariables.set("MODEL_NAME", "test-model");
-        environmentVariables.set("API_ENDPOINT", "http://test-endpoint");
         environmentVariables.set("RSS_INDEXER_ENDPOINT", "http://invalid-endpoint-that-does-not-exist.local");
         
         Map<String, Object> result = RssTool.fetchRssFeed();

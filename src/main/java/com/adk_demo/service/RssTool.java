@@ -13,7 +13,7 @@ import java.util.stream.IntStream;
 
 public class RssTool extends ToolClass {
 
-  private static final Logger logger = Logger.getLogger(RssTool.class.getName());
+  private static final Logger logger = Logger.getLogger(StockTool.class.getName());
   private static final String TOOL_NAME = "rssTool";
   private static final String METHOD_NAME = "fetchRssFeed";
   private static final ObjectMapper objectMapper = new ObjectMapper();
@@ -39,7 +39,7 @@ public class RssTool extends ToolClass {
   }
 
   public RssTool() {
-    super(TOOL_NAME, METHOD_NAME, FunctionTool.create(RssTool.class, METHOD_NAME));
+    super(TOOL_NAME, METHOD_NAME, FunctionTool.create(StockTool.class, METHOD_NAME));
     initEndpoint();
   }
 
